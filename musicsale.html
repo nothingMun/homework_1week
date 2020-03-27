@@ -15,8 +15,8 @@ for music in songs:
     title = music.select_one("td.info > a.title.ellipsis")
     title = title.text
     newTitle = " ".join(title.split())
-    artist = music.select_one("td.info > a.artist.ellipsis")
+    singer = music.select_one("td.info > a.artist.ellipsis")
     if newTitle is not None:
         rank += 1
-        print(rank ,newTitle,"by", artist.text)
+        print(rank ,newTitle,"by", singer.text)
 
