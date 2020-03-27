@@ -1,151 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
+@@ -0,0 +1,22 @@
+import requests
+from bs4 import BeautifulSoup
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Make your music</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css?family=Cute+Font&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Sunflower:300&display=swap" rel="stylesheet">
+# 타겟 URL을 읽어서 HTML를 받아오고,
+headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
+data = requests.get('https://www.genie.co.kr/chart/top200?ditc=D&rtm=N&ymd=20200309',headers=headers)
 
-    <style>
-        .wrap {
-            width: 500px;
-            margin: auto;
-        }
 
-        .title-image {
-            margin: 10px;
-        }
+soup = BeautifulSoup(data.text, 'html.parser')
+songs = soup.select("#body-content > div.newest-list > div > table > tbody > tr")
 
-        span {
-            font-size: 20px;
-        }
+rank=0
+for music in songs:
+    title = music.select_one("td.info > a.title.ellipsis")
+    title = title.text
+    newTitle = " ".join(title.split())
+    artist = music.select_one("td.info > a.artist.ellipsis")
+    if newTitle is not None:
+        rank += 1
+        print(rank ,newTitle,"by", artist.text)
 
-        .head-text {
-            margin: 30px 30px;
-            font-family: 'Cute Font', cursive;
-        }
-
-        .sub-text {
-            margin: -20px 35px 30px;
-            font-family: 'Sunflower', sans-serif;
-
-        }
-
-        .input-group {
-            font-family: 'Sunflower', sans-serif;
-        }
-
-        button {
-            margin: 30px 200px;
-            font-family: 'Cute Font', cursive;
-        }
-    </style>
-
-    <script>
-        function call() {
-            let name = $('#callName').val();
-            let style = $('#callStyle').val();
-            let adress = $('#callSAdress').val();
-            let number = $('#callNumber').val();
-
-            if (name == '') {
-                alert('이름 입력해주세요')
-                $('#callName').focus()
-                return
-            } else if(style == 'Choose...'){    
-                alert('장르 선택해주세요')
-                $('#callStyle').focus()
-                return 
-            } else if(adress == '') {
-                alert('주소 입력해주세요')
-                $('#callName').focus()
-                return 
-             }else if (number == ''){
-                alert('번호 입력해주세요')
-                $('#callNumber').focus()
-                return 
-             } else {
-                alert('접수되었습니다');
-            }
-        }
-    </script>
-
-</head>
-
-<body>
-    <div class="wrap">
-
-        <div class="title-image">
-            <img src="https://bit.ly/33h71Tt" width="500px">
-        </div>
-
-        <div class="all-text">
-            <div class="head-text">
-                <h1> 음악앨범 만들어드려요 <span>가격:30만원+@/1곡</span></h1>
-            </div>
-
-            <div class="sub-text">
-                <p>재즈 팝 가요 발라드 힙합 <br>
-                    약 1일~4일 정도 소요되며, 수정은 최대 5회까지 가능합니다<br>
-                    레퍼런스 요청 가능합니다<br></p>
-            </div>
-        </div>
-
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">주문자</span>
-            </div>
-            <input id="callName" type="text" class="form-control" aria-label="Username"
-                aria-describedby="basic-addon1">
-        </div>
-
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <label class="input-group-text" for="inputGroupSelect01">장르</label>
-            </div>
-            <select id="callStyle" class="custom-select" id="inputGroupSelect01">
-                <option selected>Choose...</option>
-                <option value="1">jazz</option>
-                <option value="2">pop</option>
-                <option value="3">balad</option>
-                <option value="4">hiphop</option>
-            </select>
-        </div>
-
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">주소</span>
-            </div>
-            <input id="callAdress" type="text" class="form-control" aria-label="Username"
-                aria-describedby="basic-addon1">
-        </div>
-
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">연락처</span>
-            </div>
-            <input id="callNumber" type="text" class="form-control" aria-label="Username"
-                aria-describedby="basic-addon1">
-        </div>
-
-        <div>
-            <button onclick="call()" type="button" class="btn btn-dark">주문하기</button>
-        </div>
-
-    </div>
-</body>
-
-</html>
